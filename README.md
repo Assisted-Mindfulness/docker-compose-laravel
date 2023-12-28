@@ -1,9 +1,12 @@
 # docker-compose-laravel
-A pretty simplified Docker Compose workflow that sets up a LEMP network of containers for local Laravel development. You can view the full article that inspired this repo [here](https://dev.to/aschmelyun/the-beauty-of-docker-for-local-laravel-development-13c0).
+A pretty simplified Docker Compose workflow that sets up a LEMP network of containers for local Laravel development.
+
+This is a fork of the repository 
+[aschmelyun/docker-compose-laravel](https://github.com/aschmelyun/docker-compose-laravel)
 
 ## Usage
 
-To get started, make sure you have [Docker installed](https://docs.docker.com/docker-for-mac/install/) on your system, and then clone this repository.
+To get started, make sure you have [Docker installed](https://docs.docker.com/engine/install/ubuntu/) on your system, and then clone this repository.
 
 Next, navigate in your terminal to the directory you cloned this, and spin up the containers for the web server by running `docker-compose up -d --build app`.
 
@@ -25,6 +28,8 @@ Three additional containers are included that handle Composer, NPM, and Artisan 
 - `docker-compose run --rm npm run dev`
 - `docker-compose run --rm artisan migrate`
 
+if your composer.json file uses git repositories, you will still have to install composer on your local computer and use it instead of the container!
+
 ## Permissions Issues
 
 If you encounter any issues with filesystem permissions while visiting your application or running a container command, try completing one of the sets of steps below.
@@ -44,41 +49,6 @@ If you encounter any issues with filesystem permissions while visiting your appl
 
 Then, either bring back up your container network or re-run the command you were trying before, and see if that fixes it.
 
-## Persistent MySQL Storage
-
-By default, whenever you bring down the Docker network, your MySQL data will be removed after the containers are destroyed. If you would like to have persistent data that remains after bringing containers down and back up, do the following:
-
-1. Create a `mysql` folder in the project root, alongside the `nginx` and `src` folders.
-2. Under the mysql service in your `docker-compose.yml` file, add the following lines:
-
-```
-volumes:
-  - ./mysql:/var/lib/mysql
-```
-
-## Usage in Production
-
-While I originally created this template for local development, it's robust enough to be used in basic Laravel application deployments. The biggest recommendation would be to ensure that HTTPS is enabled by making additions to the `nginx/default.conf` file and utilizing something like [Let's Encrypt](https://hub.docker.com/r/linuxserver/letsencrypt) to produce an SSL certificate.
-
-## Compiling Assets
-
-This configuration should be able to compile assets with both [laravel mix](https://laravel-mix.com/) and [vite](https://vitejs.dev/). In order to get started, you first need to add ` --host 0.0.0.0` after the end of your relevant dev command in `package.json`. So for example, with a Laravel project using Vite, you should see:
-
-```json
-"scripts": {
-  "dev": "vite --host 0.0.0.0",
-  "build": "vite build"
-},
-```
-
-Then, run the following commands to install your dependencies and start the dev server:
-
-- `docker-compose run --rm npm install`
-- `docker-compose run --rm --service-ports npm run dev`
-
-After that, you should be able to use `@vite` directives to enable hot-module reloading on your local Laravel application.
-
-Want to build for production? Simply run `docker-compose run --rm npm run build`.
 
 ## MailHog
 
